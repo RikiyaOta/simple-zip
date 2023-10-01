@@ -3,7 +3,7 @@
   "scripts": {
     "format": "biome format . --write",
     "dev": "next",
-    "build": "next build",
+    "build": "npx next build && cp infra/_headers out/",
     "start": "serve out"
   },
   "dependencies": {
