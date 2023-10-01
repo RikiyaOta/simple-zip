@@ -41,15 +41,11 @@ const Home = () => {
 	};
 
 	return (
-		<div className="hero min-h-screen bg-base-200">
+		<div className="hero min-h-[80vh] bg-base">
 			<div className="hero-content text-center">
 				<div className="max-w-md">
 					<h1 className="text-5xl font-bold">Simple Zip</h1>
-					<p className="py-6">
-						選んだファイルをzipファイルにまとめます。
-						<br />
-						外部サーバーとの通信はありません。
-					</p>
+					<p className="py-6">選んだファイルを zip ファイルにまとめます。</p>
 					<input
 						id="files"
 						type="file"
