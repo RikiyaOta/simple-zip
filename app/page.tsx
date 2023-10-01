@@ -1,6 +1,6 @@
 "use client";
 
-import Link from 'next/link'
+import { useState } from "react";
 import {BlobReader, BlobWriter, ZipWriter} from "@zip.js/zip.js"
 
 const buildZipFile = async (fileList: FileList): Promise<Blob> => {
@@ -17,36 +17,53 @@ const buildZipFile = async (fileList: FileList): Promise<Blob> => {
 };
 
 const downloadZipFile = (zipFile: Blob): void => {
-  document.body.appendChild(Object.assign(document.createElement("a"), {
-    download: "hello.zip",
+  Object.assign(document.createElement("a"), {
+    download: "SimpleZip.zip",
     href: URL.createObjectURL(zipFile),
-    textContent: "Download zip file",
-  }));
+  }).click();
 };
 
-const clickHandler = async () => {
-  console.info("Click!!!");
-  const inputElement = document.getElementById("files") as HTMLInputElement;
-  const {files} = inputElement;
-
-  if (files === null) {
-    console.warn("ファイルが選択されていません。");
-    return;
-  }
+const clickHandler = async (files: FileList) => {
   const zipFile = await buildZipFile(files);
   downloadZipFile(zipFile);
 };
 
 const Home = () => {
+  const [files, setFiles] = useState<FileList>();
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const fileInputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFiles(event.target.files ? event.target.files : undefined);
+  };
+
+  console.log({files});
   return (
-    <div>
-      <h1>Home</h1>
-      <p>Hello World! This is the Home page</p>
-      <p>
-        Visit the <Link href="/about">About</Link> page.
-      </p>
-      <input type="file" multiple id="files"></input>
-      <button onClick={clickHandler}>Zip!!!</button>
+    <div className="hero min-h-screen bg-base-200">
+      <div className="hero-content text-center">
+        <div className="max-w-md">
+          <h1 className="text-5xl font-bold">Simple Zip</h1>
+          <p className="py-6">
+            選んだファイルをzipファイルにまとめます。<br/>
+            外部サーバーとの通信はありません。
+          </p>
+          <input id="files" type="file" className="file-input file-input-bordered file-input-info w-full max-w-xs" multiple onChange={fileInputChangeHandler}/>
+          <div>
+            {
+              isDownloading && <span className="loading loading-spinner text-success m-5"></span>
+            }
+            {
+              files !== undefined
+                && files.length > 0
+                && !isDownloading
+                && <button className="btn btn-success m-5" onClick={async () => {
+                  setIsDownloading(true);
+                  await clickHandler(files);
+                  setIsDownloading(false);
+                }}>ダウンロード</button>
+            }
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
